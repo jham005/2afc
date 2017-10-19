@@ -2,20 +2,65 @@
 echo '<!DOCTYPE lang="en">
 <head>
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.min.js" integrity="sha256-jpW4gXAhFvqGDD5B7366rIPD7PDbAmqq4CO0ZnHbdM4=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+<script src="Resumable.js"></script>
 <title>2AFC Experiment Upload</title>
 </head>
 <body>
 <div class="container">
+    <div class="row">
+        <div class="col-lg-offset-2 col-lg-8">
+            <div class="page-header">
+                <h1>Resumable file upload</h1>
+            </div>
+        </div>
+ 
+        <div class="col-lg-offset-2 col-lg-8">
+            <button type="button" class="btn btn-success" aria-label="Add file" id="add-file-btn">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add file
+            </button>
+            <button type="button" class="btn btn-info" aria-label="Start upload" id="start-upload-btn">
+                <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Start upload
+            </button>
+            <button type="button" class="btn btn-warning" aria-label="Pause upload" id="pause-upload-btn">
+                <span class="glyphicon glyphicon-pause " aria-hidden="true"></span> Pause upload
+            </button>
+        </div>
+ 
+        <div class="col-lg-offset-2 col-lg-8">
+<div id="drop-target">
+  Drop files here to upload.
+  <ul></ul>
+</div>
+        </div>
+
+        <div class="col-lg-offset-2 col-lg-8">
+            <p>
+                <div class="progress hide" id="upload-progress">
+                    <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width: 0%">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
+</div>
+ 
+<script src="upload.js"></script>
+
 <h1>2AFC Experiment Upload</h1>';
 
-$files = $_FILES['zip'];
-if (is_string($_REQUEST['access']) && is_array($files) && $files['error'] == UPLOAD_ERR_OK && is_uploaded_file($files['tmp_name'])) {
+if (isset($_FILES['zip']) && is_string($_REQUEST['access']) && is_array($files) && $files['error'] == UPLOAD_ERR_OK && is_uploaded_file($files['tmp_name'])) {
   if ($_REQUEST['access'] != 'secret')
     echo '<div class="alert alert-warning" role="alert">The access code is incorrect.</div>';
   else {
+    $files = $_FILES['zip'];
     echo "<pre>";
     $zip = zip_open($files['tmp_name']);
     $experimentName = filename_safe(basename($files['name'], ".zip"));
