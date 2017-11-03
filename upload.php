@@ -1,8 +1,7 @@
 <?php
 require 'util.php';
 
-$fields = array('e', 'dir', 'resumableIdentifier', 'resumableFilename', 'resumableChunkNumber');
-logging(print_r($_REQUEST, true));
+$fields = array('e', 'dir', 'resumableIdentifier', 'resumableFilename', 'resumableChunkNumber', 'resumableTotalChunks');
 foreach ($fields as $f)
   if (!is_string($_REQUEST[$f]) || trim($_REQUEST[$f]) == '' || $_REQUEST[$f] == '.' || $_REQUEST[$f] == '..' || strpos($_REQUEST[$f], '/') !== false) {
     logger("Bad request: $f is '" . $_REQUEST[$f] . "'");
@@ -13,7 +12,7 @@ foreach ($fields as $f)
 $e = filename_safe(trim($_REQUEST['e']));
 $subdir = filename_safe(trim($_REQUEST['dir']));
 
-$dir = "experiments/$e/$subdir"; // . $_GET['resumableIdentifier'];
+$dir = "experiments/$e/$subdir";
 
 $chunk = $dir . '/' . filename_safe($_GET['resumableFilename']) . '.part' . intval($_GET['resumableChunkNumber']);
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -36,10 +35,10 @@ foreach ($_FILES as $file) {
   
   $fileName = filename_safe($_POST['resumableFilename']);
   
-  if (!move_uploaded_file($file['tmp_name'], $fileName))
-    logger("Failed to save chunk $_POST[resumableChunkNumber] to $fileName");
-
-  createFileFromChunks($dir, $fileName);
+  if (!move_uploaded_file($file['tmp_name'], "$dir/$fileName.part$_POST[resumableChunkNumber]"))
+    logger("Failed to save chunk $e/$subdir/$fileName.part$_POST[resumableChunkNumber]");
+  else
+    createFileFromChunks($dir, $fileName);
 }
 
 function createFileFromChunks($dir, $fileName) {
@@ -55,7 +54,7 @@ function createFileFromChunks($dir, $fileName) {
   if (($fp = fopen("$dir/$fileName", 'w')) !== false) {
     for ($i = 1; $i <= $totalChunks; $i++) {
       logger("Appending $dir/$fileName.part$i to $dir/$fileName");
-      $src = fopen("$dir/$fileName.part$i");
+      $src = fopen("$dir/$fileName.part$i", "rb");
       stream_copy_to_stream($src, $fp);
       fclose($src);
     }
