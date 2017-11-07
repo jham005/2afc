@@ -2,7 +2,7 @@
 require 'util.php';
 $e = filename_safe(trim($_GET['e']));
 if (empty($e) || !is_dir("experiments/$e")) {
-  header('HTTP/1.0 400 Bad Request');
+  header('HTTP/1.0 404 Not Found');
   exit();
 }
 
@@ -19,4 +19,5 @@ foreach (scandir("experiments/$e") as $f) {
     $data[''][] = $f;
 }
 
+ksort($data);
 echo json_encode($data);

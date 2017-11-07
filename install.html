@@ -10,40 +10,57 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.5/umd/popper.min.js" integrity="sha256-jpW4gXAhFvqGDD5B7366rIPD7PDbAmqq4CO0ZnHbdM4=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 <script src="Resumable.js"></script>
+<style>
+  #drop-target ul { list-style-type: none; margin: 2px; float: left; background: #eee; padding: 3px; border: solid 1px; }
+  #drop-target ul li { margin: 5px; padding: 0px; font-size: 1.2em; }
+</style>
+
 <title>2AFC Experiment Upload</title>
 </head>
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-lg-offset-2 col-lg-8">
-            <div class="page-header">
-                <h1>2AFC Experiment Upload</h1>
-		<div class="form-group">
-		  <label for="experiment">Experiment name</label>
-		  <input class="form-control" type="text" id="experiment" />
-		</div>
-            </div>
+      <div class="col-lg-offset-2 col-lg-8">
+        <div class="page-header">
+          <h1>2AFC Experiment Upload</h1>
+	  <div class="form-group">
+	    <select class="form-control" id="select-experiment"></select>
+	  </div>
         </div>
- 
- 
-        <div class="col-lg-offset-2 col-lg-8">
-	  <div id="drop-target" />
-        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-lg-offset-2 col-lg-8">
+	<div class="form-group">
+	  <label for="current-experiment">Current experiment</label>
+	  <input type="text" class="form-control" id="current-experiment" />
+	  <button type="button" class="btn btn-secondary" id="rename-experiment">Rename</button>
+	  <button type="button" class="btn btn-secondary" id="new-experiment">New</button>
+	  <button type="button" class="btn btn-secondary" id="new-folder">New folder</button>
+	</div>
+      </div>
+    </div>
 
-        <div class="col-lg-offset-2 col-lg-8">
-          <div class="progress hide" id="upload-progress">
-            <button type="button" class="btn btn-primary btn-block" aria-label="Upload" id="upload-btn">
-	      Upload
-            </button>
-            <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width: 0%">
-              <span class="sr-only"></span>
-            </div>
+    <div class="col-lg-offset-2 col-lg-8">
+      <div id="drop-target" />
+    </div>
+
+    <div class="row">
+      <div class="col-lg-offset-2 col-lg-8">
+	<div class="progress hide" id="upload-progress">
+          <button type="button" class="btn btn-primary btn-block" aria-label="Upload" id="upload-btn">
+	    Upload
+          </button>
+          <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" style="width: 0%">
+            <span class="sr-only"></span>
           </div>
         </div>
+      </div>
     </div>
 </div>
  
-<script src="upload.js"></script>
+<script src="install.js"></script>
 <script src="jquery-ui/jquery-ui.min.js"></script>
 
 </div>
