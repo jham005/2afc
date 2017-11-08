@@ -2,7 +2,7 @@ var dropDir = "";
 var r = new Resumable({
     target: "upload.php",
     query: function() {
-        return {e: $('#experiment').val(), dir: dropDir};
+        return {e: $('#current-experiment').val(), dir: dropDir};
     },
     testChunks: true
 });
@@ -66,7 +66,7 @@ function loadExperiment(experiment) {
                 .on('dragend', function() { $(this).removeClass('resumable-dragover'); })
                 .on('drop', function(event) {
                     $(this).removeClass('resumable-dragover')
-                    dropDir = $(event.target).parent().parent().find('input').val();
+                    dropDir = $(event.target).parent().parent().parent().find('input').val();
                 });
         });
 }
@@ -103,7 +103,7 @@ $('#upload-btn').click(function() { r.upload(); });
 var progressBar = new ProgressBar("#upload-progress");
  
 r.on("fileAdded", function(file, event) {
-    $(event.target).parent().append($('<li>').text(file.fileName).css("opacity", "0.3"));
+    $(event.target).append($('<li>').text(file.fileName).css("opacity", "0.3"));
     progressBar.fileAdded();
 });
 

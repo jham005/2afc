@@ -3,7 +3,7 @@ require 'util.php';
 
 $fields = array('e', 'dir', 'resumableIdentifier', 'resumableFilename', 'resumableChunkNumber', 'resumableTotalChunks');
 foreach ($fields as $f)
-  if (!is_string($_REQUEST[$f]) || trim($_REQUEST[$f]) == '' || $_REQUEST[$f] == '.' || $_REQUEST[$f] == '..' || strpos($_REQUEST[$f], '/') !== false) {
+  if (!is_string($_REQUEST[$f]) || ($f != 'dir' && trim($_REQUEST[$f]) == '') || $_REQUEST[$f] == '.' || $_REQUEST[$f] == '..' || strpos($_REQUEST[$f], '/') !== false) {
     logger("Bad request: $f is '" . $_REQUEST[$f] . "'");
     header('HTTP/1.0 400 Bad Request');
     exit;
