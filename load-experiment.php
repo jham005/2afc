@@ -6,7 +6,7 @@ if (empty($e) || !is_dir("experiments/$e")) {
   exit();
 }
 
-$data = array();
+$data = array('' => array());
 foreach (scandir("experiments/$e") as $f) {
   if ($f == '.' || $f == '..') continue;
   if (is_dir("experiments/$e/$f")) {

@@ -15,31 +15,24 @@ $(document).on('focusin', 'input', function() {
 
 function listExperiments() {
     $.getJSON('list-experiments.php').done(function(data) {
-	var curr = $('#select-experiment').val();
-	var currStillExists = false;
 	$('#select-experiment').empty();
 	$.each(data, function(key, value) {
             $('#select-experiment').append($("<option/>").text(value).val(value));
-	    if (value == curr) currStillExists = true;
 	});
-	if (currStillExists)
-	    $('#select-experiment').val(curr);
-	$('#select-experiment').change();
     });
 }
 
 function loadExperiment(experiment) {
     $.getJSON('load-experiment.php', {e: experiment})
         .done(function(data) {
-	    var e = $('#select-experiment').val();
-	    $('#current-experiment').val(e).data('val', e).change();
+	    $('#current-experiment').val(experiment).data('val', experiment).change();
             $('#drop-target').empty();
             $.map(data, function(files, folderName) {
                 var input = $("<input>").attr('type', 'text').val(folderName)
                     .change(function() {
                         $.post("rename-folder.php", {e: $('#current-experiment').val(), prev: $(this).data('val'), curr: $(this).val()});
                     });
-                if (folderName == "") input.prop('disabled', true);
+                if (folderName == "") input.hide();
                 var ul = $("<ul>");
                 $.map(files, function(file) {
                     ul.append($("<li>").text(file));
@@ -81,12 +74,18 @@ $('#current-experiment').change(function() {
 
 $('#rename-experiment').click(function() {
     $.post('rename-experiment.php', {e: $('#current-experiment').data('val'), n: $('#current-experiment').val()})
-	.done(listExperiments);
+	.done(function() {
+	    listExperiments();
+	    $('#select-experiment').val($('#current-experiment').val()).change();
+	});
 });
 
 $('#new-experiment').click(function() {
     $.post('new-experiment.php', {n: $('#current-experiment').val()})
-	.done(listExperiments);
+	.done(function() {
+	    listExperiments();
+	    $('#select-experiment').val($('#current-experiment').val()).change();
+	});
 });
 
 $('#new-folder').click(function() {
@@ -97,6 +96,7 @@ $('#new-folder').click(function() {
 $('#select-experiment').change(function() { loadExperiment($(this).val()); });
 
 listExperiments();
+loadExperiment($('#select-experiment').val());
 
 $('#upload-btn').click(function() { r.upload(); });
  
