@@ -12,7 +12,7 @@ $e = filename_safe(trim($_POST['e']));
 $item = filename_safe($_POST['i']);
 $srcFolder = filename_safe(trim($_POST['s']));
 $dstFolder = filename_safe(trim($_POST['d']));
-if (invalidDir($e) || invalidDir($srcFolder) || invalidDir($dstFolder)) {
+if (empty($e) || invalidDir($e) || invalidDir($srcFolder) || invalidDir($dstFolder)) {
   header('HTTP/1.0 400 Bad Request');
   exit();
 }

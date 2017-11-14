@@ -14,5 +14,5 @@ function filename_safe($str) {
 }
 
 function invalidDir($dir) {
-  return empty($dir) || $dir ==  '.' || $dir == '..';
+  return $dir ==  '.' || $dir == '..';
 }
