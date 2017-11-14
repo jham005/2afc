@@ -2,7 +2,7 @@ var dropDir = "";
 var r = new Resumable({
     target: "upload.php",
     query: function() {
-        return {e: $('#current-experiment').val(), dir: dropDir};
+        return { e: $('#current-experiment').val(), dir: dropDir };
     },
     testChunks: true
 });
@@ -13,24 +13,27 @@ $(document).on('focusin', 'input', function() {
 });
 
 
-function listExperiments() {
+function listExperiments(selected) {
     $.getJSON('list-experiments.php').done(function(data) {
 	$('#select-experiment').empty();
 	$.each(data, function(key, value) {
-            $('#select-experiment').append($("<option/>").text(value).val(value));
+	    var option = $("<option/>").text(value).val(value);
+	    if (value == selected)
+		option.attr('selected', 'selected');
+            $('#select-experiment').append(option);
 	});
     });
 }
 
-function loadExperiment(experiment) {
-    $.getJSON('load-experiment.php', {e: experiment})
+function loadExperiment(experimentName) {
+    $.getJSON('load-experiment.php', { e: experimentName })
         .done(function(data) {
-	    $('#current-experiment').val(experiment).data('val', experiment).change();
+	    $('#current-experiment').val(experimentName).data('val', experimentName);
             $('#drop-target').empty();
             $.map(data, function(files, folderName) {
                 var input = $("<input>").attr('type', 'text').val(folderName)
                     .change(function() {
-                        $.post("rename-folder.php", {e: $('#current-experiment').val(), prev: $(this).data('val'), curr: $(this).val()});
+                        $.post("rename-folder.php", { e: $('#current-experiment').val(), prev: $(this).data('val'), curr: $(this).val() });
                     });
                 if (folderName == "") input.hide();
                 var ul = $("<ul>");
@@ -44,14 +47,14 @@ function loadExperiment(experiment) {
                         var item = $(ui.item[0]);
                         var srcFolder = $(ui.sender[0]).parent().parent().find('input').val();
                         var dstFolder = item.parent().parent().parent().find('input').val();
-                        $.post("move-item.php", {e: $('#current-experiment').val(), i: item.text(), s: srcFolder, d: dstFolder});
+                        $.post("move-item.php", { e: $('#current-experiment').val(), i: item.text(), s: srcFolder, d: dstFolder });
                     }
                 });
                 $('#drop-target')
 		    .append($("<div>")
 			    .addClass('row')
-			    .append($("<div>").addClass('col-2').append(input).append($('<br>')))
-			    .append($("<div>").addClass('col-6').append(ul)));
+			    .append($("<div>").addClass('col-4').append(input).append($('<br>')))
+			    .append($("<div>").addClass('col-8').append(ul)));
             });
             r.assignDrop($('#drop-target ul'));
             $('#drop-target ul')
@@ -65,41 +68,37 @@ function loadExperiment(experiment) {
 }
 
 $('#current-experiment').change(function() {
-    var isChanged = $(this).val() != $(this).data('val');
-    $('#rename-experiment').prop('disabled', !isChanged);
-    $('#new-experiment').prop('disabled', !isChanged);
-    $('#new-folder').prop('disabled', isChanged);
-});
-
-
-$('#rename-experiment').click(function() {
-    $.post('rename-experiment.php', {e: $('#current-experiment').data('val'), n: $('#current-experiment').val()})
-	.done(function() {
-	    listExperiments();
-	    $('#select-experiment').val($('#current-experiment').val()).change();
+    var oldName = $('#current-experiment').data('val');
+    var newName = $('#current-experiment').val();
+    if (oldName != newName)
+	$.post('rename-experiment.php', { e: oldName, n: newName })
+	.done(function(sanitisedName) {
+	    $('#current-experiment').val(sanitisedName).data('val', sanitisedName);
+	    listExperiments(sanitisedName);
+	    loadExperiment(sanitisedName);
 	});
 });
 
 $('#new-experiment').click(function() {
-    $.post('new-experiment.php', {n: $('#current-experiment').val()})
-	.done(function() {
-	    listExperiments();
-	    $('#select-experiment').val($('#current-experiment').val()).change();
+    $.post('new-experiment.php')
+	.done(function(newName) {
+	    listExperiments(newName);
+	    loadExperiment(newName);
 	});
 });
 
 $('#new-folder').click(function() {
-    $.post('new-folder.php', {e: $('#current-experiment').val() })
-	.done(loadExperiment($('#current-experiment').val()));
+    var experimentName = $('#current-experiment').val();
+    $.post('new-folder.php', { e: experimentName })
+	.done(loadExperiment(experimentName));
 });
 
 $('#select-experiment').change(function() { loadExperiment($(this).val()); });
 
 listExperiments();
-loadExperiment($('#select-experiment').val());
 
-$('#upload-btn').click(function() { r.upload(); });
- 
+$(function() { $('#select-experiment').change(); });
+
 var progressBar = new ProgressBar("#upload-progress");
  
 r.on("fileAdded", function(file, event) {

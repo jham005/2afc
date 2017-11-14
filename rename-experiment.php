@@ -13,4 +13,5 @@ if (empty($n) || is_dir("experiments/$n")) {
 }
 
 rename("experiments/$e", "experiments/$n");
-header("HTTP/1.0 204 No Content");
+header("HTTP/1.0 200 OK");
+echo $n;
