@@ -95,6 +95,8 @@ $('#new-folder').click(function() {
 
 $('#select-experiment').change(function() { loadExperiment($(this).val()); });
 
+$('#upload-btn').click(function() { r.upload(); });
+
 listExperiments();
 
 $(function() { $('#select-experiment').change(); });
