@@ -28,6 +28,8 @@ function listExperiments(selected) {
 function loadExperiment(experimentName) {
     $.getJSON('load-experiment.php', { e: experimentName })
         .done(function(data) {
+	    $('#select-row').hide();
+	    $('#edit-row').show();
 	    $('#current-experiment').val(experimentName).data('val', experimentName);
             $('#drop-target').empty();
 	    var inputId = 0;
@@ -71,6 +73,11 @@ function loadExperiment(experimentName) {
         });
 }
 
+$('#change-experiment').click(function() {
+    $('#select-row').show();
+    $('#edit-row').hide();
+});
+
 $('#trash').click(function() {
     if (confirm("Empty the trash?"))
 	$.post('empty-trash.php', { e: $('#current-experiment').val() })
@@ -105,18 +112,18 @@ $('#new-folder').click(function() {
 	.done(loadExperiment(experimentName));
 });
 
-$('#select-experiment').change(function() { loadExperiment($(this).val()); });
+$('#go-experiment').click(function() { loadExperiment($('#select-experiment').val()); });
 
 $('#upload-btn').click(function() { r.upload(); });
 
+$('#select-row').show();
+$('#edit-row').hide();
 listExperiments();
-
-$(function() { $('#select-experiment').change(); });
 
 var progressBar = new ProgressBar("#upload-progress");
  
 r.on("fileAdded", function(file, event) {
-    $(event.target).append($('<li>').text(file.fileName).css("opacity", "0.3"));
+    $(event.target).closest('ul').append($('<li>').text(file.fileName).css("opacity", "0.3"));
     progressBar.fileAdded();
 });
 
