@@ -38,7 +38,7 @@ function loadExperiment(experimentName) {
                     .change(function() {
                         $.post("rename-folder.php", { e: $('#current-experiment').val(), prev: $(this).data('val'), curr: $(this).val() });
                     });
-                if (folderName == "") input.hide();
+                if (folderName == "") input.prop('disabled', true).val('Introductory .html documents');
                 if (folderName == "Trash") input.prop('disabled', true);
                 var ul = $("<ul>").data('folder', folderId);
                 $.map(files, function(file) {
