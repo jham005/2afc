@@ -1,4 +1,5 @@
 <?php
+require 'util.php';
 $n = 1;
 while (is_dir("experiments/Unnamed-$n"))
   $n++;
