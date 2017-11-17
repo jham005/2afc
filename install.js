@@ -1,8 +1,8 @@
-var dropDir = "";
 var r = new Resumable({
     target: "upload.php",
-    query: function() {
-        return { e: $('#current-experiment').val(), dir: dropDir };
+    query: function(fileObj) {
+	var folder = $(fileObj.container).data('folder') || $(fileObj.container).parent().data('folder');
+        return { e: $('#current-experiment').val(), dir: $('#' + folder).val() };
     },
     testChunks: true
 });
@@ -30,13 +30,17 @@ function loadExperiment(experimentName) {
         .done(function(data) {
 	    $('#current-experiment').val(experimentName).data('val', experimentName);
             $('#drop-target').empty();
+	    var inputId = 0;
             $.map(data, function(files, folderName) {
-                var input = $("<input>").attr('type', 'text').val(folderName)
+		var folderId = 'input-' + inputId;
+		inputId++;
+                var input = $("<input>").attr('type', 'text').attr('id', folderId).val(folderName)
                     .change(function() {
                         $.post("rename-folder.php", { e: $('#current-experiment').val(), prev: $(this).data('val'), curr: $(this).val() });
                     });
                 if (folderName == "") input.hide();
-                var ul = $("<ul>");
+                if (folderName == "Trash") input.prop('disabled', true);
+                var ul = $("<ul>").data('folder', folderId);
                 $.map(files, function(file) {
                     ul.append($("<li>").text(file));
                 });
@@ -44,10 +48,11 @@ function loadExperiment(experimentName) {
                     connectWith: "ul",
 		    dropOnEmpty: true,
                     receive: function(event, ui) {
-                        var item = $(ui.item[0]);
-                        var srcFolder = $(ui.sender[0]).parent().parent().find('input').val();
-                        var dstFolder = item.parent().parent().parent().find('input').val();
-                        $.post("move-item.php", { e: $('#current-experiment').val(), i: item.text(), s: srcFolder, d: dstFolder });
+			$.each(ui.item, function(i, item) {
+                            var srcFolder = $('#' + $(ui.sender[i]).data('folder')).val();
+                            var dstFolder = $('#' + $(item).parent().data('folder')).val();
+                            $.post("move-item.php", { e: $('#current-experiment').val(), i: $(item).text(), s: srcFolder, d: dstFolder });
+			});
                     }
                 });
                 $('#drop-target')
@@ -62,10 +67,17 @@ function loadExperiment(experimentName) {
                 .on('dragend', function() { $(this).removeClass('resumable-dragover'); })
                 .on('drop', function(event) {
                     $(this).removeClass('resumable-dragover')
-                    dropDir = $(event.target).parent().parent().parent().find('input').val();
                 });
         });
 }
+
+$('#trash').click(function() {
+    if (confirm("Empty the trash?"))
+	$.post('empty-trash.php', { e: $('#current-experiment').val() })
+	.done(function() {
+	    loadExperiment($('#current-experiment').val());
+	});
+});
 
 $('#current-experiment').change(function() {
     var oldName = $('#current-experiment').data('val');

@@ -17,5 +17,6 @@ if (empty($e) || invalidDir($e) || invalidDir($srcFolder) || invalidDir($dstFold
   exit();
 }
 
+logger("rename experiments/$e/$srcFolder/$item experiments/$e/$dstFolder/$item");
 rename("experiments/$e/$srcFolder/$item", "experiments/$e/$dstFolder/$item");
 header("HTTP/1.0 204 No Content");

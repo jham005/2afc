@@ -14,17 +14,17 @@ $subdir = filename_safe(trim($_REQUEST['dir']));
 
 $dir = "experiments/$e/$subdir";
 
+if (!is_dir($dir)) {
+  header("HTTP/1.0 400 Bad Request");
+  exit();
+}
+
 $chunk = $dir . '/' . filename_safe($_GET['resumableFilename']) . '.part' . intval($_GET['resumableChunkNumber']);
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (file_exists($chunk))
     header("HTTP/1.0 200 Ok");
   else
     header("HTTP/1.0 204 No Content");
-}
-
-if (!is_dir($dir)) {
-  logger("Creating $dir...");
-  mkdir($dir, 0777, true);
 }
 
 foreach ($_FILES as $file) {
