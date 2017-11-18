@@ -127,6 +127,7 @@ r.on("fileAdded", function(file, event) {
 r.on("fileSuccess", function(file, message) {
     $('#drop-target li').filter(function() { return $(this).text() == file.fileName; }).css("opacity", "1");
     progressBar.finish();
+    r.removeFile(file);
 });
  
 r.on("progress", function() {
