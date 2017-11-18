@@ -111,8 +111,6 @@ $('#new-folder').click(function() {
 
 $('#go-experiment').click(function() { loadExperiment($('#select-experiment').val()); });
 
-$('#upload-btn').click(function() { r.upload(); });
-
 $('#select-row').show();
 $('#edit-row').hide();
 listExperiments();
@@ -122,12 +120,14 @@ var progressBar = new ProgressBar("#upload-progress");
 r.on("fileAdded", function(file, event) {
     $(event.target).closest('ul').append($('<li>').text(file.fileName).css("opacity", "0.3"));
     progressBar.fileAdded();
+    r.upload();
 });
 
 r.on("fileSuccess", function(file, message) {
     $('#drop-target li').filter(function() { return $(this).text() == file.fileName; }).css("opacity", "1");
     progressBar.finish();
     r.removeFile(file);
+    r.upload();
 });
  
 r.on("progress", function() {
@@ -135,17 +135,17 @@ r.on("progress", function() {
 });
 
 function ProgressBar(ele) {
-    this.thisEle = $(ele);
+    this.ele = $(ele);
     
     this.fileAdded = function() {
-        (this.thisEle).removeClass("hide").find(".progress-bar").css("width", "0%");
+        this.ele.removeClass("hide").find(".progress-bar").css("width", "0%");
     },
  
     this.uploading = function(progress) {
-        (this.thisEle).find(".progress-bar").attr("style", "width:" + progress + "%");
+        this.ele.find(".progress-bar").attr("style", "width:" + progress + "%");
     },
     
     this.finish = function() {
-        (this.thisEle).addClass("hide").find(".progress-bar").css("width", "0%");
+        this.ele.addClass("hide").find(".progress-bar").css("width", "0%");
     }
 }
