@@ -25,6 +25,11 @@ foreach (scandir("experiments/$e") as $dir)
     rmdir("experiments/$e/$dir");
   }
 
+if (!is_dir("experiments/$e/Trash")) {
+  logger("mkdir experiments/$e/Trash");
+  mkdir("experiments/$e/Trash");
+}
+
 header("HTTP/1.0 204 No Content");
 
 function isEmptyDir($dir) {

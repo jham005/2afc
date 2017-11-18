@@ -13,14 +13,11 @@ $(document).on('focusin', 'input', function() {
 });
 
 
-function listExperiments(selected) {
+function listExperiments() {
     $.getJSON('list-experiments.php').done(function(data) {
 	$('#select-experiment').empty();
 	$.each(data, function(key, value) {
-	    var option = $("<option/>").text(value).val(value);
-	    if (value == selected)
-		option.attr('selected', 'selected');
-            $('#select-experiment').append(option);
+            $('#select-experiment').append($("<option/>").text(value).val(value));
 	});
     });
 }
@@ -93,7 +90,7 @@ $('#current-experiment').change(function() {
 	$.post('rename-experiment.php', { e: oldName, n: newName })
 	.done(function(sanitisedName) {
 	    $('#current-experiment').val(sanitisedName).data('val', sanitisedName);
-	    listExperiments(sanitisedName);
+	    listExperiments();
 	    loadExperiment(sanitisedName);
 	});
 });
@@ -101,7 +98,7 @@ $('#current-experiment').change(function() {
 $('#new-experiment').click(function() {
     $.post('new-experiment.php')
 	.done(function(newName) {
-	    listExperiments(newName);
+	    listExperiments();
 	    loadExperiment(newName);
 	});
 });
