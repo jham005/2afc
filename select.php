@@ -12,7 +12,7 @@ echo '<!DOCTYPE html>
   <h2>Select the experiment you would like to run</h2>
    <ul>';
 foreach (scandir("experiments") as $exp)
-  if ($exp != '.' && $exp != '..')
+  if ($exp != '.' && $exp != '..' && is_dir($exp))
     echo "<li><a href='index.php?experiment=$exp'>$exp</a></li>";
 echo '</ul>
 </div>

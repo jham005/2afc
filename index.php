@@ -24,8 +24,7 @@ if (!is_string($_REQUEST['experiment']) || !is_dir("experiments/$_REQUEST[experi
 
 $experiment = $_REQUEST['experiment'];
 
-echo "<div id='consent'>
-  <h1>Welcome to <q>$experiment</q>, a Two Alternative Force Choice experiment</h1>";
+echo "<div id='consent'>";
 echo readhtml('consent', 'experiments', $experiment);
 echo '
     <button class="btn btn-primary" id="agree">I agree to take part</button>
@@ -65,6 +64,7 @@ foreach ($trials as $i => $trial) {
   echo '<div class="instructions">' . $trial['instructions'] . '</div>';
   $left = $trial['left'];
   $right = $trial['right'];
+
   echo '<img class="lazy left"  data-src="' . addslashes($left)  . '" data-item="' . addslashes(basename($left)) . '" />';
   echo '<img class="lazy right" data-src="' . addslashes($right) . '" data-item="' . addslashes(basename($right)) . '" />';
   echo '</div>';
@@ -75,14 +75,23 @@ foreach ($trials as $i => $trial) {
       $countdown++;
       $remainder--;
     }
-    
-    echo '<div><p>Take a break.</p> <button type="button" class="btn btn-primary break">Continue</button> </div>';
+
+    $break = readhtml('break', 'experiments', $experiment);
+    if (empty($break))
+      $break = '<p>Take a break.</p>';
+    echo '<div>' . $break . '<br /><button type="button" class="btn btn-primary break">Continue</button></div>';
   }
 }
 
 echo '<div id="finished" style="display:none">
-<h1>Thank you!  You have completed the experiment.</h1>
-<a class="btn btn-primary" role="button" href="select.php">Click here to do another experiment.</a>
+<h1>Thank you!  You have completed the experiment.</h1>';
+
+echo '<form action="debrief.php" method="post">';
+echo "<input type='hidden' name='userId' value='$userId' />";
+echo readhtml('debrief', 'experiments', $experiment);
+echo '<input type="submit" value="Submit" /></form>';
+
+echo '<a class="btn btn-primary" role="button" href="select.php">Click here to do another experiment.</a>
 </div>
 </div>
 </div>
