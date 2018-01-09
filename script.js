@@ -1,4 +1,5 @@
 $(function() {
+    var t0 = new Date().getTime();
     $('#trials img').click(function() {
 	var div = $(this).parent();
 	$.post(
@@ -8,16 +9,19 @@ $(function() {
 	      trial: div.index(),
 	      left: div.children('img.left').data('item'),
 	      right: div.children('img.right').data('item'),
+	      time: new Date().getTime() - t0,
 	      choice: $(this).data('item')
 	    });
 	div.hide();
 	div.next().show();
+	t0 = new Date().getTime();
     });
  
     $('button.break').click(function() {
 	var div = $(this).parent();
 	div.hide();
 	div.next().show();
+	t0 = new Date().getTime();
     });
 
     function start() {

@@ -9,7 +9,7 @@ echo '<!DOCTYPE lang="en">
 <script type="text/javascript" src="script.js" ></script>
 <title>2AFC</title>
 <style>
-img { width: 45%; }
+img { width: 45%; border: 2px solid; }
 img.left { float: left; margin-right: 5px; }
 </style>
 </head>
@@ -34,9 +34,10 @@ echo '
     </div>
   </div>
 </div>
+<div class="container">
 <div id="tutorial" style="display: none">';
 echo readhtml('tutorial', 'experiments', $experiment);
-echo '</div>';
+echo '</div></div>';
 
 $fd = fopen("next-id.dat", "c+");
 if (!$fd)
@@ -79,19 +80,17 @@ foreach ($trials as $i => $trial) {
     $break = readhtml('break', 'experiments', $experiment);
     if (empty($break))
       $break = '<p>Take a break.</p>';
-    echo '<div>' . $break . '<br /><button type="button" class="btn btn-primary break">Continue</button></div>';
+    echo '<div class="container" style="display: none">' . $break . '<br /><button type="button" class="btn btn-primary break">Continue</button></div>';
   }
 }
 
-echo '<div id="finished" style="display:none">
+echo '<div class="container" id="finished" style="display:none">
 <h1>Thank you!  You have completed the experiment.</h1>';
 
 echo '<form action="debrief.php" method="post">';
 echo "<input type='hidden' name='userId' value='$userId' />";
 echo readhtml('debrief', 'experiments', $experiment);
-echo '<input type="submit" value="Submit" /></form>';
-
-echo '<a class="btn btn-primary" role="button" href="select.php">Click here to do another experiment.</a>
+echo '<input class="btn btn-primary" role="button" type="submit" value="Submit" /></form>
 </div>
 </div>
 </div>
