@@ -29,7 +29,21 @@ $(function() {
 	$('#trials div:first').show();
     };
     
+    function resolve(url, base) {
+	var oldBase = $("base").detach(); 
+	var newBase = $("<base>").attr("href", base).appendTo("head"); 
+	var el = document.createElement('div');
+	el.innerHTML = '<a href="' + $('<span/>').text(url).html() + '" />';
+	var url = el.firstChild.href;
+   	newBase.remove(); 
+	oldBase.appendTo("head"); 
+	return url; 
+    }
+
     function tutorial() {
+	$('#tutorial img').each(function() {
+	    $(this).attr('src', resolve($(this).attr('src'), "experiments/" + $('#trials').data('experiment') + "/"))
+	});
 	$('#consent').hide();
         $("#tutorial button[action]").each(function() {
             $(this).click(

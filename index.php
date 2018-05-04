@@ -9,7 +9,7 @@ echo '<!DOCTYPE lang="en">
 <script type="text/javascript" src="script.js" ></script>
 <title>2AFC</title>
 <style>
-img { width: 45%; border: 2px solid; }
+img { max-width: 48%; max-height: 90vh; height: auto; width: auto; object-fit: contain; border: 2px solid; }
 img.left { float: left; margin-right: 5px; }
 </style>
 </head>
@@ -23,6 +23,11 @@ if (!is_string($_REQUEST['experiment']) || !is_dir("experiments/$_REQUEST[experi
 }
 
 $experiment = $_REQUEST['experiment'];
+
+global $ini;
+$ini = array('breakAfter' => 15, 'shuffleGroups' => true, 'shuffleMembers' => false);
+if (is_readable("experiments/$experiment/settings.ini"))
+  $ini = array_merge($ini, parse_ini_file("experiments/$experiment/settings.ini"));
 
 echo "<div id='consent'>";
 echo readhtml('consent', 'experiments', $experiment);
@@ -57,7 +62,7 @@ else {
 
 $trials = readTrials($experiment);
 echo '<div id="trials" data-user="' . $userId . '" data-experiment="' . addslashes($experiment) . '" >';
-$breakAfter = 15;
+$breakAfter = isset($ini['breakAfter']) ? $ini['breakAfter'] : 15;
 $remainder = count($trials) % $breakAfter;
 $countdown = $remainder > 0 ? $breakAfter + 1 : $breakAfter;
 foreach ($trials as $i => $trial) {
@@ -110,10 +115,18 @@ function readTrials($experiment) {
 	}
       }
 
-      shuffle($groups);
+      global $ini;
+
+      if ($ini['shuffleGroups'])
+	shuffle($groups);
+      else
+	sort($groups);
       foreach ($groups as $members)
 	if (count($members) > 1) {
-	  shuffle($members);
+	  if ($ini['shuffleMembers'])
+	    shuffle($members);
+	  else
+	    sort($members);
 	  $trials[] = array('instructions' => readhtml('instructions', 'experiments', $experiment, $dir),
 			    'left' => $members[0],
 			    'right' => $members[1]);
