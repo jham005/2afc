@@ -14,7 +14,9 @@ $(document).on('focusin', 'input', function() {
 
 
 function listExperiments() {
+    $("#loading-dialog").modal();
     $.getJSON('list-experiments.php').done(function(data) {
+	$("#loading-dialog").modal('hide');
 	$('#select-experiment').empty();
 	$.each(data, function(key, value) {
             $('#select-experiment').append($("<option/>").text(value).val(value));
@@ -23,8 +25,10 @@ function listExperiments() {
 }
 
 function loadExperiment(experimentName) {
+    $("#loading-dialog").modal();
     $.getJSON('load-experiment.php', { e: experimentName })
         .done(function(data) {
+	    $("#loading-dialog").modal('hide');
 	    $('#select-row').hide();
 	    $('#edit-row').show();
 	    $('#current-experiment').val(experimentName).data('val', experimentName);
@@ -57,8 +61,9 @@ function loadExperiment(experimentName) {
                 $('#drop-target')
 		    .append($("<div>")
 			    .addClass('row')
-			    .append($("<div>").addClass('col-4').append(input).append($('<br>')))
-			    .append($("<div>").addClass('col-8').append(ul)));
+			    .append($("<div>").addClass('col-3').append(input).append($('<br>')))
+			    .append($("<div>").addClass('col-6').append(ul))
+			    .append($("<div>").addClass('col-3').append($('<span class="folder-info">').text(files.length + " item(s)"))));
             });
             r.assignDrop($('#drop-target ul'));
             $('#drop-target ul')
@@ -105,8 +110,12 @@ $('#new-experiment').click(function() {
 
 $('#new-folder').click(function() {
     var experimentName = $('#current-experiment').val();
+    $("#loading-dialog").modal();
     $.post('new-folder.php', { e: experimentName })
-	.done(loadExperiment(experimentName));
+	.done(function() {
+	    $("#loading-dialog").modal('hide');
+	    loadExperiment(experimentName);
+	});
 });
 
 $('#go-experiment').click(function() { loadExperiment($('#select-experiment').val()); });
