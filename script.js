@@ -41,9 +41,6 @@ $(function() {
     }
 
     function tutorial() {
-	$('#tutorial img').each(function() {
-	    $(this).attr('src', resolve($(this).attr('src'), "experiments/" + $('#trials').data('experiment') + "/"))
-	});
 	$('#consent').hide();
         $("#tutorial button[action]").each(function() {
             $(this).click(
@@ -65,6 +62,10 @@ $(function() {
         $('#tutorial div.section').hide();
         $('#tutorial div.section:first').show();
     };
+    
+    $('#tutorial img').each(function() {
+	$(this).attr('src', resolve($(this).attr('src'), "experiments/" + $('#trials').data('experiment') + "/"))
+    });
     
     window.setTimeout(
 	function() {
