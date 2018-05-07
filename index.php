@@ -7,7 +7,7 @@ echo '<!DOCTYPE lang="en">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="script.js" ></script>
-<title>2AFC</title>
+<title>Experiment</title>
 <style>
 img { max-width: 48%; max-height: 90vh; height: auto; width: auto; object-fit: contain; border: 2px solid; }
 img.left { float: left; margin-right: 5px; }
@@ -32,11 +32,16 @@ if (is_readable("experiments/$experiment/settings.ini"))
 echo "<div id='consent'>";
 echo readhtml('consent', 'experiments', $experiment);
 echo '
-    <button class="btn btn-primary" id="agree">I agree to take part</button>
-    <button class="btn btn-primary" id="disagree">I do not agree to take part</button>
-    <div id="goodbye" style="display: none">
-      <p>Ok, goodbye!</p>
+  <div class="row justify-content-around">
+    <div class="col-md-2">
+      <button class="btn btn-primary" id="agree">I agree to take part</button>
     </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary" id="disagree">I do not agree to take part</button>
+    </div>
+  </div>
+  <div id="goodbye" style="display: none">
+    <p>Ok, goodbye!</p>
   </div>
 </div>
 <div class="container">
@@ -61,7 +66,7 @@ else {
 }
 
 $trials = readTrials($experiment);
-echo '<div id="trials" data-user="' . $userId . '" data-experiment="' . addslashes($experiment) . '" >';
+echo '<div id="trials" data-user="' . $userId . '" data-experiment="' . addslashes($experiment) . '" data-ntrials="' . count($trials) . '">';
 $breakAfter = isset($ini['breakAfter']) ? $ini['breakAfter'] : 15;
 $remainder = count($trials) % $breakAfter;
 $countdown = $remainder > 0 ? $breakAfter + 1 : $breakAfter;
@@ -76,6 +81,7 @@ foreach ($trials as $i => $trial) {
   echo '</div>';
   $countdown--;
   if ($countdown == 0 && $i + $breakAfter < count($trials)) {
+    $percent = round($i / count($trials) * 100);
     $countdown = $breakAfter;
     if ($remainder > 0) {
       $countdown++;
@@ -85,7 +91,17 @@ foreach ($trials as $i => $trial) {
     $break = readhtml('break', 'experiments', $experiment);
     if (empty($break))
       $break = '<p>Take a break.</p>';
-    echo '<div class="container" style="display: none">' . $break . '<br /><button type="button" class="btn btn-primary break">Continue</button></div>';
+    echo '
+<div class="container" style="display: none">'
+      . $break
+      . '
+  <br />
+  <div class="progress">
+    <div class="progress-bar bg-info" style="width:' . $percent . '%" role="progressbar" aria-valuenow="' . $percent . '" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <br />
+  <button type="button" class="btn btn-primary break">Continue</button>
+</div>';
   }
 }
 
