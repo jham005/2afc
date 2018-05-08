@@ -55,6 +55,10 @@ function loadExperiment(experimentName) {
                             var srcFolder = $('#' + $(ui.sender[i]).data('folder')).val();
                             var dstFolder = $('#' + $(item).parent().data('folder')).val();
                             $.post("move-item.php", { e: $('#current-experiment').val(), i: $(item).text(), s: srcFolder, d: dstFolder });
+			    var srcTotal = $(ui.sender).closest('ul').parent().next().find('.folder-total');
+			    srcTotal.text((parseInt(srcTotal.text()) - 1) + " item(s)");
+			    var dstTotal = $(item).closest('ul').parent().next().find('.folder-total');
+			    dstTotal.text((parseInt(dstTotal.text()) + 1) + " item(s)");
 			});
                     }
                 });
@@ -63,7 +67,9 @@ function loadExperiment(experimentName) {
 			    .addClass('row')
 			    .append($("<div>").addClass('col-3').append(input).append($('<br>')))
 			    .append($("<div>").addClass('col-6').append(ul))
-			    .append($("<div>").addClass('col-3').append($('<span class="folder-info">').text(files.length + " item(s)"))));
+			    .append($("<div>")
+				    .addClass('col-3')
+				    .append($('<span class="folder-total">').text(files.length + " item(s)"))));
             });
             r.assignDrop($('#drop-target ul'));
             $('#drop-target ul')
@@ -133,7 +139,11 @@ r.on("fileAdded", function(file, event) {
 });
 
 r.on("fileSuccess", function(file, message) {
-    $('#drop-target li').filter(function() { return $(this).text() == file.fileName; }).css("opacity", "1");
+    var ul = $(file.container).closest('ul');
+    var li = ul.children().filter(function() { return $(this).text() == file.fileName; });
+    li.css("opacity", "1");
+    var total = ul.parent().next().find('.folder-total');
+    total.text((parseInt(total.text()) + 1) + " item(s)");
     progressBar.finish();
     r.removeFile(file);
     r.upload();

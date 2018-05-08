@@ -25,7 +25,7 @@ if (!is_string($_REQUEST['experiment']) || !is_dir("experiments/$_REQUEST[experi
 $experiment = $_REQUEST['experiment'];
 
 global $ini;
-$ini = array('breakAfter' => 15, 'shuffleGroups' => true, 'shuffleMembers' => false);
+$ini = array('breakAfter' => 20, 'shuffleGroups' => true, 'shuffleMembers' => false);
 if (is_readable("experiments/$experiment/settings.ini"))
   $ini = array_merge($ini, parse_ini_file("experiments/$experiment/settings.ini"));
 
@@ -110,6 +110,7 @@ echo '<div class="container" id="finished" style="display:none">
 
 echo '<form action="debrief.php" method="post">';
 echo "<input type='hidden' name='userId' value='$userId' />";
+echo "<input type='hidden' name='experiment' value='$experiment' />";
 echo readhtml('debrief', 'experiments', $experiment);
 echo '<input class="btn btn-primary" role="button" type="submit" value="Submit" /></form>
 </div>

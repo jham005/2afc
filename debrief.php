@@ -1,12 +1,10 @@
 <?php
-$fd = fopen("comments.dat", "c");
+$fd = fopen("comments.csv", "c");
 if ($fd && flock($fd, LOCK_EX)) {
   date_default_timezone_set('UTC');
   fseek($fd, 0, SEEK_END);
-  fwrite($fd, date("Y-m-d H:i:s") . "\n");
-  foreach ($_POST as $k => $v)
-    fwrite($fd, "$k: $v\n");
-  fwrite($fd, "\n------------------------------\n");
+  fwrite($fd, date("Y-m-d H:i:s") . ",");
+  fputcsv($fd, $_POST);
   flock($fd, LOCK_UN);
   fclose($fd);
 }
