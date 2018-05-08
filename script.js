@@ -10,7 +10,9 @@ $(function() {
 	      left: div.children('img.left').data('item'),
 	      right: div.children('img.right').data('item'),
 	      time: new Date().getTime() - t0,
-	      choice: $(this).data('item')
+	      choice: $(this).data('item'),
+	      width: window.innerWidth,
+	      height: window.innerHeight
 	    });
 	div.hide();
 	div.next().show();
