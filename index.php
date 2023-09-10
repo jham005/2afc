@@ -11,6 +11,7 @@ echo '<!DOCTYPE lang="en">
 <style>
 img { max-width: 48%; max-height: 90vh; height: auto; width: auto; object-fit: contain; border: 2px solid; }
 img.left { float: left; margin-right: 5px; }
+#trials img:hover { cursor: pointer; }
 </style>
 </head>
 <body>

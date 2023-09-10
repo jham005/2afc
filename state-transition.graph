@@ -1,0 +1,12 @@
+# http://www.webgraphviz.com/
+digraph {
+  "Select experiment" -> "Consent";
+  "Consent" -> "Done" [label = "decline"];
+  "Consent" -> "Tutorial" [label = "accept"];
+  "Tutorial" -> "Question";
+  "Question" -> "Question" [label = "next"];
+  "Question" -> "Pause" [label = "every 15"];
+  "Pause" -> "Question";
+  "Question" -> "Questionnaire" [label = "no more questions"];
+  "Questionnaire" -> "Done";     	       
+}
